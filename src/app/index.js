@@ -3,7 +3,16 @@
 import AppCtrl from './controllers/AppCtrl';
 import UsersCtrl from './controllers/UsersCtrl';
 
-angular.module('studhq', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ui.router', 'ngMaterial'])
+angular.module('studhq', [
+    'ngAnimate',
+    'ngCookies',
+    'ngTouch',
+    'ngSanitize',
+    'ngResource',
+    'ui.router',
+    'ngMaterial',
+    'lbServices'
+  ])
   .controller('AppCtrl', AppCtrl)
   .controller('UsersCtrl', UsersCtrl)
 
