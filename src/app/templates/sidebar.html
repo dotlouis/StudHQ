@@ -1,0 +1,17 @@
+<section layout="row" layout-fill flex>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">StudHQ</h1>
+        </md-toolbar>
+        <md-content class="md-padding">
+            <md-list>
+                <md-list-item ui-sref="app.users">
+                    <p>Users</p>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </md-sidenav>
+    <md-content flex class="md-padding">
+        <div ui-view name="main"></div>
+    </md-content>
+</section>

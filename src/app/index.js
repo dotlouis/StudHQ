@@ -1,20 +1,30 @@
 'use strict';
 
-import MainCtrl from './main/main.controller';
-import NavbarCtrl from '../app/components/navbar/navbar.controller';
+import AppCtrl from './controllers/AppCtrl';
+import UsersCtrl from './controllers/UsersCtrl';
 
 angular.module('studhq', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ui.router', 'ngMaterial'])
-  .controller('MainCtrl', MainCtrl)
-  .controller('NavbarCtrl', NavbarCtrl)
+  .controller('AppCtrl', AppCtrl)
+  .controller('UsersCtrl', UsersCtrl)
 
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
-      .state('home', {
-        url: '/',
-        templateUrl: 'app/main/main.html',
-        controller: 'MainCtrl'
+      .state('app', {
+        url: '/app',
+        abstract: true,
+        templateUrl: 'app/templates/sidebar.html',
+        controller: 'AppCtrl'
+      })
+      .state('app.users', {
+          url: '/users',
+          views: {
+              'main@app' :{
+                  templateUrl: 'app/templates/users.html',
+                  controller: 'UsersCtrl'
+              }
+          }
       });
 
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/app/users');
   })
 ;
