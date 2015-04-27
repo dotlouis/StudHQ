@@ -1,10 +1,9 @@
 <md-tabs class="md-primary">
-    <md-tab id="userList">
+    <md-tab id="courseList">
         <md-tab-label>List</md-tab-label>
         <md-tab-body class="md-padding">
             <md-list>
-                <md-list-item ng-repeat="user in userList" class="md-2-line">
-                    <img ng-src="{{user.face}}?20" class="md-avatar" />
+                <md-list-item ng-repeat="course in courseList" class="md-2-line">
                     <div class="md-list-item-text">
                         <h3>{{user.name}}</h3>
                         <p>{{user.username}} - {{user.email}}</p>

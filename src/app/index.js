@@ -2,7 +2,9 @@
 
 import AppCtrl from './controllers/AppCtrl';
 import UsersCtrl from './controllers/UsersCtrl';
+import CoursesCtrl from './controllers/CoursesCtrl';
 import LoginCtrl from './controllers/LoginCtrl';
+import ParseCourse from './factories/ParseCourse';
 
 angular.module('studhq', [
     'ngAnimate',
@@ -17,7 +19,9 @@ angular.module('studhq', [
 ])
 .controller('AppCtrl', AppCtrl)
 .controller('UsersCtrl', UsersCtrl)
+.controller('CoursesCtrl', CoursesCtrl)
 .controller('LoginCtrl', LoginCtrl)
+.factory('ParseCourse', ParseCourse)
 
 .config(function ($stateProvider, $urlRouterProvider, $httpProvider, LoopBackResourceProvider) {
     $stateProvider
@@ -38,7 +42,7 @@ angular.module('studhq', [
         templateUrl: 'app/templates/sidebar.html',
         controller: 'AppCtrl',
         data: {
-            permissions: {
+            permissions:{
                 only: ['god'],
                 redirectTo: 'login'
             }
@@ -47,9 +51,18 @@ angular.module('studhq', [
     .state('app.users', {
         url: '/users',
         views: {
-            'main@app' :{
-                templateUrl: 'app/templates/users.html',
-                controller: 'UsersCtrl'
+            'main@app': {
+                controller: 'UsersCtrl',
+                templateUrl: 'app/templates/users.html'
+            }
+        }
+    })
+    .state('app.courses', {
+        url: '/courses',
+        views: {
+            'main@app': {
+                controller: 'CoursesCtrl',
+                templateUrl: 'app/templates/courses.html'
             }
         }
     });

@@ -10,6 +10,8 @@ class AppCtrl{
             });
         };
 
+        $scope.stateName;
+
         CustomUser.getCurrent().$promise
         .then((user)=>{
             $scope.user = user;
