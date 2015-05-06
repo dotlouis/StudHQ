@@ -15,25 +15,22 @@ class CoursesCtrl{
 
         $scope.makeCourses = function(){
 
-            let courses = $scope.csv.result;
-
             if(!$scope.field){
-                alert("please choose a field for the courses to be added to");
+                alert('please choose a field for the courses to be added to');
                 return;
             }
 
-            // we groupBy specialty to get all the different specialties
-            let groupedBySpecialty = _.groupBy(courses,"specialty");
+            // Arrays to be filled and batch saved later
             let specialties = [];
             let templates = [];
             let joinSpecTmpl = [];
 
-            // We group by specialty,
-            var sorted = _.mapValues(groupedBySpecialty,
-                (specialtyCourses, specialtyName)=>{
-
+            let courses = _.chain($scope.csv.result)
+            // we groupBy specialty to get all the different specialties
+            .groupBy("specialty")
+            .mapValues((specialtyCourses, specialtyName)=>{
                 // we create the specialty from the name and the field it's in
-                var specialty = ParseSpecialty.create(specialtyName, $scope.field);
+                let specialty = ParseSpecialty.create(specialtyName, $scope.field);
                 // we put the specialty in the array to be persisted later
                 specialties.push(specialty);
 
@@ -41,19 +38,16 @@ class CoursesCtrl{
                     'value': specialty,
                     'templates': specialtyCourses
                 };
-            });
+            })
+            .value();
 
-            console.log('sorted:');
-            console.log(sorted);
-
-            console.log('specialties:');
-            console.log(specialties);
+            console.log(courses);
 
             Parse.Object.saveAll(specialties)
             .then(()=>{
                 console.log('specialties saved');
 
-                _.mapValues(sorted, (specialty, specialtyName)=>{
+                _.mapValues(courses, (specialty, specialtyName)=>{
                     // we loop through the courses,
                     specialty.templates = _.chain(specialty.templates)
                     // extract the date based on string elements
@@ -62,7 +56,7 @@ class CoursesCtrl{
                     .groupBy(ParseTemplate.filter)
                     .mapValues((templateCourses, templateName)=>{
                         // we create the specialty from the name
-                        var template = ParseTemplate.create(templateName, specialtyName);
+                        let template = ParseTemplate.create(templateName, specialtyName);
                         // we put the template in the array to be persisted later
                         templates.push(template);
 
@@ -76,22 +70,18 @@ class CoursesCtrl{
 
                 });
 
-                console.log('templates:');
-                console.log(templates);
-
                 return Parse.Object.saveAll(templates);
             })
             .then(()=>{
                 console.log('templates saved');
 
-                _.mapValues(sorted, (specialty)=>{
+                // for each template in each specialty we create
+                // the corresponding joint record
+                _.mapValues(courses, (specialty)=>{
                     _.mapValues(specialty.templates,(template)=>{
                         joinSpecTmpl.push(ParseTemplate.createJoin(specialty.value.id, template.value.id));
                     });
                 })
-
-                console.log('joinSpecTmpl:');
-                console.log(joinSpecTmpl);
 
                 return Parse.Object.saveAll(joinSpecTmpl);
             })
@@ -99,7 +89,6 @@ class CoursesCtrl{
                 console.log('joinSpecTmpl saved');
             })
             .fail((error)=>{console.log(error);});
-
 
         };
     }
