@@ -26,6 +26,26 @@ class ParseCourse{
 
     }
 
+    createOption(course, template, specialty){
+        return new Parse.Object('OptionsOfTemplates',{
+            'Day': course.day,
+            'Begin_Time': moment(course.start).format('HH:mm'),
+            'End_Time': moment(course.end).format('HH:mm'),
+            'CompleteName': specialty.value.get('FieldName')+' '+specialty.value.get('Name'),
+            'EveryTwoWeek': false,
+            'EveryWeek': false,
+            'ID_Template': template.value.id,
+            // 'Icon': 'fa-book',
+            'Location': course.room,
+            'Mandatory': true,
+            'Name': template.value.get('Name'),
+            // 'Number':,
+            'Professor': course.professor,
+            'Recurrence': false,
+            'Type': course.state
+        });
+    }
+
     // creates a Date from a week number and a week day
     extractDate(course){
         var week = course.week.slice(course.week.indexOf('(')+1,course.week.indexOf(')'));

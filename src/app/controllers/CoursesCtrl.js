@@ -13,7 +13,7 @@ class CoursesCtrl{
             });
         };
 
-        $scope.makeCourses = function(){
+        $scope.uploadCourses = function(){
 
             if(!$scope.field){
                 alert('please choose a field for the courses to be added to');
@@ -24,6 +24,7 @@ class CoursesCtrl{
             let specialties = [];
             let templates = [];
             let joinSpecTmpl = [];
+            let options = [];
 
             let courses = _.chain($scope.csv.result)
             // we groupBy specialty to get all the different specialties
@@ -45,7 +46,7 @@ class CoursesCtrl{
 
             Parse.Object.saveAll(specialties)
             .then(()=>{
-                console.log('specialties saved');
+                console.log(specialties.length+' specialties saved');
 
                 _.mapValues(courses, (specialty, specialtyName)=>{
                     // we loop through the courses,
@@ -73,20 +74,29 @@ class CoursesCtrl{
                 return Parse.Object.saveAll(templates);
             })
             .then(()=>{
-                console.log('templates saved');
+                console.log(templates.length+' templates saved');
 
-                // for each template in each specialty we create
-                // the corresponding joint record
                 _.mapValues(courses, (specialty)=>{
                     _.mapValues(specialty.templates,(template)=>{
+                        // for each template in each specialty we create
+                        // the corresponding joint record
                         joinSpecTmpl.push(ParseTemplate.createJoin(specialty.value.id, template.value.id));
+
+                        // we create the options of each template
+                        _.mapValues(template.courses, (course)=>{
+                            options.push(ParseCourse.createOption(course, template, specialty));
+                        });
                     });
                 })
 
                 return Parse.Object.saveAll(joinSpecTmpl);
             })
             .then(()=>{
-                console.log('joinSpecTmpl saved');
+                console.log(joinSpecTmpl.length+' joinSpecTmpl saved');
+                return Parse.Object.saveAll(options);
+            })
+            .then(()=>{
+                console.log(options.length+' options saved');
             })
             .fail((error)=>{console.log(error);});
 

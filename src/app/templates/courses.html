@@ -11,7 +11,7 @@
         <md-select-label>{{ field ? field.get('Name') : 'Choose a field' }}</md-select-label>
         <md-option ng-value="field" ng-repeat="field in fields">{{field.get('Name')}}</md-option>
     </md-select>
-    <md-button ng-click="makeCourses()" class="md-raised md-primary">Add</md-button>
+    <md-button ng-click="uploadCourses()" class="md-raised md-primary">Add</md-button>
     <pre>
         {{csv.result | json}}
     </pre>
