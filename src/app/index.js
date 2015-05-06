@@ -5,6 +5,9 @@ import UsersCtrl from './controllers/UsersCtrl';
 import CoursesCtrl from './controllers/CoursesCtrl';
 import LoginCtrl from './controllers/LoginCtrl';
 import ParseCourse from './factories/ParseCourse';
+import ParseField from './factories/ParseField';
+import ParseSpecialty from './factories/ParseSpecialty';
+import ParseTemplate from './factories/ParseTemplate';
 
 angular.module('studhq', [
     'ngAnimate',
@@ -15,13 +18,17 @@ angular.module('studhq', [
     'ui.router',
     'ngMaterial',
     'permission',
+    'ngCsvImport',
     'lbServices'
 ])
 .controller('AppCtrl', AppCtrl)
 .controller('UsersCtrl', UsersCtrl)
 .controller('CoursesCtrl', CoursesCtrl)
 .controller('LoginCtrl', LoginCtrl)
-.factory('ParseCourse', ParseCourse)
+.factory('ParseCourse', ParseCourse.ParseCourseFactory)
+.factory('ParseField', ParseField.ParseFieldFactory)
+.factory('ParseSpecialty', ParseSpecialty.ParseSpecialtyFactory)
+.factory('ParseTemplate', ParseTemplate.ParseTemplateFactory)
 
 .config(function ($stateProvider, $urlRouterProvider, $httpProvider, LoopBackResourceProvider) {
     $stateProvider
@@ -85,6 +92,8 @@ angular.module('studhq', [
         };
     });
 
+    Parse.initialize('Br7o7womqjuCB9wK8UlDNfhOMqRjMEzDTHMeDAxi', 'uSMs0S6u0dpbvWZ3sUcjz13kLgpYURhj8nZgoUly');
+    moment.locale('fr');
 })
 
 .run(['Permission','CustomUser', function(Permission, CustomUser){

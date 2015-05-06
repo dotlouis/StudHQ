@@ -1,3 +1,7 @@
 md-toolbar{
     box-shadow: none;
 }
+
+csv-import{
+    border: 1px solid red;
+}

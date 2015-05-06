@@ -1,25 +1,18 @@
-<md-tabs class="md-primary">
-    <md-tab id="courseList">
-        <md-tab-label>List</md-tab-label>
-        <md-tab-body class="md-padding">
-            <md-list>
-                <md-list-item ng-repeat="course in courseList" class="md-2-line">
-                    <div class="md-list-item-text">
-                        <h3>{{user.name}}</h3>
-                        <p>{{user.username}} - {{user.email}}</p>
-                    </div>
-                </md-list-item>
-            </md-list>
-        </md-tab-body>
-    </md-tab>
-    <md-tab id="userCreate">
-        <md-tab-label>Create</md-tab-label>
-        <md-tab-body class="md-padding">
-            <md-input-container flex>
-                <label>Raw User Data</label>
-                <textarea ng-model="$parent.rawUsers" columns="1"></textarea>
-            </md-input-container>
-            <md-button ng-click="createUsers()" class="md-raised md-primary">Create</md-button>
-        </md-tab-body>
-    </md-tab>
-</md-tabs>
+<div class="csv-import">
+    <ng-csv-import content="csv.content"
+    header="true"
+    separator="','"
+    result="csv.result"></ng-csv-import>
+</div>
+
+<div ng-show="csv">
+    <h4>JSON</h4>
+    <md-select ng-model="field" md-on-open="loadFields()" style="min-width: 200px;">
+        <md-select-label>{{ field ? field.get('Name') : 'Choose a field' }}</md-select-label>
+        <md-option ng-value="field" ng-repeat="field in fields">{{field.get('Name')}}</md-option>
+    </md-select>
+    <md-button ng-click="makeCourses()" class="md-raised md-primary">Add</md-button>
+    <pre>
+        {{csv.result | json}}
+    </pre>
+</div>
