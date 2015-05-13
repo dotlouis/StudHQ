@@ -4,26 +4,23 @@ class ParseCourse{
     constructor($q){
     }
 
-    create(courses){
-        var specialties = _.groupBy(courses,"specialty");
-        var sorted = _.mapValues(specialties, (specialtyCourses, specialtyName)=>{
-            console.log(specialtyName);
-
-            // createParseSpecialty(spec);
-            var specialty = createParseSpecialty(specialtyName);
-
-            return  _.chain(specialtyCourses)
-                    .mapValues(extractDate)
-                    .groupBy(filterTemplate)
-                    .mapValues((templateCourses, templateName)=>{
-                        console.log(templateName);
-                        createParseTemplate(templateName, specialtyName);
-                        return templateCourses;
-                    })
-                    .value();
+    create(option, course){
+        return new Parse.Object('Courses',{
+            // 'AnnounceBody':,
+            // 'AnnounceButton':,
+            // 'AnnounceTitle':,
+            // 'Announcement':,
+            'Begining':course.start,
+            'CompleteName':option.get('CompleteName'),
+            'Ending':course.end,
+            'ID_Option':option.id,
+            'Icon':option.get('Icon'),
+            'Location':course.room,
+            'Name':option.get('Name'),
+            // 'Number':,
+            'Professor':course.professor,
+            'Type': course.state
         });
-        console.log(sorted);
-
     }
 
     createOption(course, template, specialty){
@@ -35,14 +32,14 @@ class ParseCourse{
             'EveryTwoWeek': false,
             'EveryWeek': false,
             'ID_Template': template.value.id,
-            // 'Icon': 'fa-book',
+            'Icon': 'fa-book',
             'Location': course.room,
             'Mandatory': true,
             'Name': template.value.get('Name'),
             // 'Number':,
             'Professor': course.professor,
             'Recurrence': false,
-            'Type': course.state
+            'Type': 'CM'
         });
     }
 

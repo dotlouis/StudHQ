@@ -25,6 +25,8 @@ class CoursesCtrl{
             let templates = [];
             let joinSpecTmpl = [];
             let options = [];
+            let instanceCourses = [];
+            let allCourses = [];
 
             let courses = _.chain($scope.csv.result)
             // we groupBy specialty to get all the different specialties
@@ -84,7 +86,9 @@ class CoursesCtrl{
 
                         // we create the options of each template
                         _.mapValues(template.courses, (course)=>{
-                            options.push(ParseCourse.createOption(course, template, specialty));
+                            let option = ParseCourse.createOption(course, template, specialty);
+                            options.push(option);
+                            allCourses.push({option: option, course: course});
                         });
                     });
                 })
@@ -97,6 +101,15 @@ class CoursesCtrl{
             })
             .then(()=>{
                 console.log(options.length+' options saved');
+
+                _.map(allCourses, (obj)=>{
+                    instanceCourses.push(ParseCourse.create(obj.option, obj.course));
+                });
+
+                return Parse.Object.saveAll(instanceCourses);
+            })
+            .then(()=>{
+                console.log(instanceCourses.length+' instanceCourses saved');
             })
             .fail((error)=>{console.log(error);});
 
