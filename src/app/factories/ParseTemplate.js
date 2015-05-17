@@ -24,7 +24,10 @@ class ParseTemplate{
 
     // Filter by templates while ignoring what's in parenthesis
     filter(course){
-        return course.template.slice(0,course.template.indexOf('(')).trim();    
+        if(course.template.indexOf('(') != -1)
+            return course.template.slice(0,course.template.indexOf('(')).trim();
+        else
+            return course.template.trim();
     }
 
     static ParseTemplateFactory($q){
