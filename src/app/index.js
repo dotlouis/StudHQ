@@ -93,6 +93,13 @@ angular.module('studhq', [
     });
 
     Parse.initialize('Br7o7womqjuCB9wK8UlDNfhOMqRjMEzDTHMeDAxi', 'uSMs0S6u0dpbvWZ3sUcjz13kLgpYURhj8nZgoUly');
+
+    /********************************************************************************************************/
+    /*                                          PRODUCTION DATABASE                                         */
+    /*                                                                                                      */
+    // Parse.initialize('cei7mRd9aWsbrWCkmkbXzhinkcKhnsIlw59BnaMY', 'EhQ2No3Qz2HXJzQ03cgYQ6uhBkHYx8uXhf3Ym3Q8');
+    /********************************************************************************************************/
+
     moment.locale('fr');
 })
 
