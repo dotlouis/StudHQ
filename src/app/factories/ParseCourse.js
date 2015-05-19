@@ -19,7 +19,7 @@ class ParseCourse{
             'Name':option.get('Name'),
             // 'Number':,
             'Professor':course.professor,
-            'Type': course.state
+            'Type': 'CM'
         });
     }
 

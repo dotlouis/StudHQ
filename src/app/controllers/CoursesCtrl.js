@@ -114,6 +114,33 @@ class CoursesCtrl{
             .fail((error)=>{console.log(error);});
 
         };
+
+        // This function subtract one week to all courses that was instanciated
+        // one week too late due to a bug.
+        // It also modifies the Type to 'CM'
+        $scope.updateCourses = function(){
+
+            let date1 = moment(new Date()).subtract(2, 'days').startOf('day').toDate();
+            let date2 = moment(new Date()).subtract(1, 'days').startOf('day').toDate();
+            console.log('greaterThan: '+date1);
+            console.log('lesserThan: '+date2);
+            new Parse.Query('Courses')
+            .greaterThan('createdAt', date1)
+            .lessThan('createdAt', date2)
+            .limit(1000)
+            .find()
+            .then((courses)=>{
+                console.log(courses.length+' results');
+                _.map(courses, (course)=>{
+                    // console.log(course.get('Begining'));
+                    course.set('Type', 'CM');
+                    course.set('Begining', moment(course.get('Begining')).subtract(1,'week').toDate());
+                    course.set('Ending', moment(course.get('Ending')).subtract(1,'week').toDate());
+                });
+                // Parse.Object.saveAll(courses);
+            })
+            .fail((error)=>{console.log(error);});
+        };
     }
 }
 
