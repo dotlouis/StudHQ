@@ -1,13 +1,11 @@
 'use strict';
 
 import AppCtrl from './controllers/AppCtrl';
-import UsersCtrl from './controllers/UsersCtrl';
 import CoursesCtrl from './controllers/CoursesCtrl';
-import LoginCtrl from './controllers/LoginCtrl';
 import ParseCourse from './factories/ParseCourse';
-import ParseField from './factories/ParseField';
-import ParseSpecialty from './factories/ParseSpecialty';
-import ParseTemplate from './factories/ParseTemplate';
+import ParseAnthill from './factories/ParseAnthill';
+import ParseTag from './factories/ParseTag';
+import ParseFeed from './factories/ParseFeed';
 
 angular.module('studhq', [
     'ngAnimate',
@@ -17,52 +15,22 @@ angular.module('studhq', [
     'ngResource',
     'ui.router',
     'ngMaterial',
-    'permission',
-    'ngCsvImport',
-    'lbServices'
+    'ngCsvImport'
 ])
 .controller('AppCtrl', AppCtrl)
-.controller('UsersCtrl', UsersCtrl)
 .controller('CoursesCtrl', CoursesCtrl)
-.controller('LoginCtrl', LoginCtrl)
 .factory('ParseCourse', ParseCourse.ParseCourseFactory)
-.factory('ParseField', ParseField.ParseFieldFactory)
-.factory('ParseSpecialty', ParseSpecialty.ParseSpecialtyFactory)
-.factory('ParseTemplate', ParseTemplate.ParseTemplateFactory)
+.factory('ParseAnthill', ParseAnthill.ParseAnthillFactory)
+.factory('ParseTag', ParseTag.ParseTagFactory)
+.factory('ParseFeed', ParseFeed.ParseFeedFactory)
 
-.config(function ($stateProvider, $urlRouterProvider, $httpProvider, LoopBackResourceProvider) {
+.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     $stateProvider
-    .state('login', {
-        url: '/login',
-        templateUrl: 'app/templates/login.html',
-        controller: 'LoginCtrl',
-        data: {
-            permissions: {
-                only: ['anonymous'],
-                redirectTo: 'app.users'
-            }
-        }
-    })
     .state('app', {
         url: '/app',
         abstract: true,
-        templateUrl: 'app/templates/sidebar.html',
         controller: 'AppCtrl',
-        data: {
-            permissions:{
-                only: ['god'],
-                redirectTo: 'login'
-            }
-        }
-    })
-    .state('app.users', {
-        url: '/users',
-        views: {
-            'main@app': {
-                controller: 'UsersCtrl',
-                templateUrl: 'app/templates/users.html'
-            }
-        }
+        template: '<ui-view name="main"></ui-view>'
     })
     .state('app.courses', {
         url: '/courses',
@@ -74,9 +42,7 @@ angular.module('studhq', [
         }
     });
 
-    $urlRouterProvider.otherwise('/app/users');
-
-    LoopBackResourceProvider.setUrlBase('http://localhost:3005/api');
+    $urlRouterProvider.otherwise('/app/courses');
 
     // Handling errors
     // http://docs.strongloop.com/display/public/LB/AngularJS+JavaScript+SDK#AngularJSJavaScriptSDK-Handling401Unauthorized
@@ -92,7 +58,7 @@ angular.module('studhq', [
         };
     });
 
-    Parse.initialize('Br7o7womqjuCB9wK8UlDNfhOMqRjMEzDTHMeDAxi', 'uSMs0S6u0dpbvWZ3sUcjz13kLgpYURhj8nZgoUly');
+    Parse.initialize('LK0ZnJAA5uMrksf7t5tGPbMTrIlmwzWYzrJrHcjR', 'uFXMpOz1ksG4bIyRdkLvwxCtx6MdWZ8R0R5H8Pqo');
 
     /********************************************************************************************************/
     /*                                          PRODUCTION DATABASE                                         */
@@ -101,18 +67,4 @@ angular.module('studhq', [
     /********************************************************************************************************/
 
     moment.locale('fr');
-})
-
-.run(['Permission','CustomUser', function(Permission, CustomUser){
-    Permission.defineRole('anonymous', function() {
-        if(!CustomUser.isAuthenticated())
-            return true;
-        return false;
-    });
-
-    Permission.defineRole('god', function() {
-        if(CustomUser.isAuthenticated())
-            return true;
-        return false;
-    });
-}]);
+});

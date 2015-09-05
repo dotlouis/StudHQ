@@ -12,11 +12,11 @@
 
 <div ng-show="csv">
     <h4>JSON</h4>
-    <md-select ng-model="field" md-on-open="loadFields()" style="min-width: 200px;">
-        <md-select-label>{{ field ? field.get('Name') : 'Choose a field' }}</md-select-label>
-        <md-option ng-value="field" ng-repeat="field in fields">{{field.get('Name')}}</md-option>
+    <md-select ng-model="anthill" md-on-open="loadAnthill()" style="min-width: 200px;">
+        <md-select-label>{{ anthill ? anthill.get('Name') : 'Select an anthill' }}</md-select-label>
+        <md-option ng-value="anthill" ng-repeat="anthill in anthills">{{anthill.get('Name')}}</md-option>
     </md-select>
-    <md-button ng-click="uploadCourses()" class="md-raised md-primary">Add</md-button>
+    <md-button ng-click="process()" class="md-raised md-primary">Add</md-button>
     <pre>
         {{csv.result | json}}
     </pre>

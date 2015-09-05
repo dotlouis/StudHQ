@@ -4,43 +4,8 @@ class ParseCourse{
     constructor($q){
     }
 
-    create(option, course){
-        return new Parse.Object('Courses',{
-            // 'AnnounceBody':,
-            // 'AnnounceButton':,
-            // 'AnnounceTitle':,
-            // 'Announcement':,
-            'Begining':course.start,
-            'CompleteName':option.get('CompleteName'),
-            'Ending':course.end,
-            'ID_Option':option.id,
-            'Icon':option.get('Icon'),
-            'Location':course.room,
-            'Name':option.get('Name'),
-            // 'Number':,
-            'Professor':course.professor,
-            'Type': 'CM'
-        });
-    }
-
-    createOption(course, template, specialty){
-        return new Parse.Object('OptionsOfTemplates',{
-            'Day': course.day,
-            'Begin_Time': moment(course.start).format('HH:mm'),
-            'End_Time': moment(course.end).format('HH:mm'),
-            'CompleteName': specialty.value.get('FieldName')+' '+specialty.value.get('Name'),
-            'EveryTwoWeek': false,
-            'EveryWeek': false,
-            'ID_Template': template.value.id,
-            'Icon': 'fa-book',
-            'Location': course.room,
-            'Mandatory': true,
-            'Name': template.value.get('Name'),
-            // 'Number':,
-            'Professor': course.professor,
-            'Recurrence': false,
-            'Type': 'CM'
-        });
+    create(course){
+      return new Parse.Object('Event',course);
     }
 
     // creates a Date from a week number and a week day
@@ -78,26 +43,3 @@ class ParseCourse{
 ParseCourse.ParseCourseFactory.$inject = ['$q'];
 
 export default ParseCourse;
-
-function createParseTemplate(templateName, specialtyName){
-    new Parse.Object('TemplatesOfCourses',{
-        'Name': templateName
-    })
-    .save()
-    .then((tpl)=>{
-        return new Parse.Object('Joint_Spec_Template',{
-            'ID_Template': tpl.id,
-            'ID_Speciatly': spec.id
-        })
-        .save();
-    });
-}
-
-function makeParseObject(course, template){
-    // console.log(template);
-    console.log(course);
-    // return new Parse.Object("Courses",{
-    //
-    // });
-    return course;
-}
