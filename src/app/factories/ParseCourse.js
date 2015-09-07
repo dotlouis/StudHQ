@@ -10,14 +10,17 @@ class ParseCourse{
 
     // creates a Date from a week number and a week day
     extractDate(course){
-        var week = course.week.slice(course.week.indexOf('(')+1,course.week.indexOf(')'));
-        var day = course.day;
-        var hour = parseInt(course.hour.slice(0,course.hour.indexOf('h')));
-        var min = parseInt(course.hour.slice(course.hour.indexOf('h')+1));
+        var week = parseInt(course.week.slice(course.week.indexOf('(')+1,course.week.indexOf(')')).trim());
+
+        if(week < 36)
+          week +=53;
+        var day = course.day.trim();
+        var hour = parseInt(course.hour.slice(0,course.hour.indexOf('h')).trim());
+        var min = parseInt(course.hour.slice(course.hour.indexOf('h')+1).trim());
 
         var duration = moment.duration({
-            hours: parseInt(course.duration.slice(0,course.duration.indexOf('h'))),
-            minutes: parseInt(course.duration.slice(course.duration.indexOf('h')+1,course.duration.indexOf('m')))
+            hours: parseInt(course.duration.slice(0,course.duration.indexOf('h')).trim()),
+            minutes: parseInt(course.duration.slice(course.duration.indexOf('h')+1,course.duration.indexOf('m')).trim())
         });
 
         // Thanks momentJS, you save my life so much <3

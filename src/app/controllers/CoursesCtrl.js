@@ -1,8 +1,10 @@
 'use strict';
 
 class CoursesCtrl{
-    constructor($scope, $q, ParseCourse, ParseAnthill, ParseTag, ParseFeed){
+    constructor($scope, $q, ParseCourse, ParseAnthill, ParseTag, ParseFeed, ParseType){
         $scope.$parent.stateName = 'Courses';
+
+        let eventType;
 
         $scope.loadAnthill = function(){
             return ParseAnthill.getAll().then((anthills)=>{
@@ -20,10 +22,20 @@ class CoursesCtrl{
               return;
           }
 
-          processTags()
+          processTypes()
+          .then(processTags)
           .then(processFeeds)
           .then(processCourses);
         };
+
+        function processTypes(){
+            return ParseType.getAll()
+            .then((types)=>{
+              eventType = _.filter(types, (t)=>{
+                return t.attributes.Name == 'Amphi / CM';
+              })[0];
+            });
+        }
 
         function processTags(){
           let existingTags;
@@ -47,7 +59,7 @@ class CoursesCtrl{
             .keys()
             .map((tagString)=>{
               // extract tags from spec string
-              return tagString.split(' ');
+              return tagString.split('/');
             })
             // flatten the previously created nested array
             .flatten()
@@ -97,7 +109,7 @@ class CoursesCtrl{
           })
           .map((feedCourses, feedName)=>{
 
-            let tagsArray = feedCourses[0].tags.split(' ');
+            let tagsArray = feedCourses[0].tags.split('/');
 
             // for each feed get the corresponding tag.
             let feedTags = _.pluck(_.filter(tagList,(tag)=>{
@@ -141,7 +153,9 @@ class CoursesCtrl{
               'Feeds': [courseFeed.id],
               'Recurrence': false,
               'Place': c.room,
-
+              'Type': eventType.id,
+              'TypeString': eventType.attributes.Name,
+              'Icon': eventType.attributes.Icon
             });
             return course;
           })
@@ -182,6 +196,6 @@ class CoursesCtrl{
     }
 }
 
-CoursesCtrl.$inject = ['$scope','$q','ParseCourse','ParseAnthill','ParseTag','ParseFeed'];
+CoursesCtrl.$inject = ['$scope','$q','ParseCourse','ParseAnthill','ParseTag','ParseFeed','ParseType'];
 
 export default CoursesCtrl;

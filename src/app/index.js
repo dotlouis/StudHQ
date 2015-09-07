@@ -5,6 +5,7 @@ import CoursesCtrl from './controllers/CoursesCtrl';
 import ParseCourse from './factories/ParseCourse';
 import ParseAnthill from './factories/ParseAnthill';
 import ParseTag from './factories/ParseTag';
+import ParseType from './factories/ParseType';
 import ParseFeed from './factories/ParseFeed';
 
 angular.module('studhq', [
@@ -23,6 +24,7 @@ angular.module('studhq', [
 .factory('ParseAnthill', ParseAnthill.ParseAnthillFactory)
 .factory('ParseTag', ParseTag.ParseTagFactory)
 .factory('ParseFeed', ParseFeed.ParseFeedFactory)
+.factory('ParseType', ParseType.ParseTypeFactory)
 
 .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     $stateProvider
