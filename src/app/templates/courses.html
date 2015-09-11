@@ -6,7 +6,15 @@
 </div>
 
 <div>
-    <!-- <md-button ng-click="updateCourses()" class="md-raised md-primary">Update</md-button> -->
+  <md-input-container>
+    <label>TypeString</label>
+    <input ng-model="typeString">
+  </md-input-container>
+  <md-input-container>
+    <label>TypeId</label>
+    <input ng-model="typeId">
+  </md-input-container>
+  <md-button ng-click="addTypeString()" class="md-raised md-primary">Add TypeString</md-button>
 </div>
 
 
@@ -17,6 +25,7 @@
         <md-option ng-value="anthill" ng-repeat="anthill in anthills">{{anthill.get('Name')}}</md-option>
     </md-select>
     <md-button ng-click="process()" class="md-raised md-primary">Add</md-button>
+    <md-checkbox ng-model="simulation">Simulation</md-checkbox>
     <pre>
         {{csv.result | json}}
     </pre>

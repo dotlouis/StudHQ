@@ -5,7 +5,7 @@ class ParseTag{
     }
 
     getAll(){
-        return new Parse.Query('Tag').find();
+        return new Parse.Query('Tag').limit(1000).find();
     }
 
     create(name, filter){

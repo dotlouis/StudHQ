@@ -5,7 +5,7 @@ class ParseFeed{
     }
 
     getAll(){
-        return new Parse.Query('Feed').find();
+        return new Parse.Query('Feed').limit(1000).find();
     }
 
     create(name, tags){

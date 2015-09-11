@@ -4,7 +4,31 @@ class CoursesCtrl{
     constructor($scope, $q, ParseCourse, ParseAnthill, ParseTag, ParseFeed, ParseType){
         $scope.$parent.stateName = 'Courses';
 
-        let eventType;
+        $scope.addTypeString = function(){
+          if(!$scope.typeId || !$scope.typeString){
+            console.error("needs typeId and typeString");
+            return;
+          }
+
+          new Parse.Query('Event').equalTo('Type',$scope.typeId).doesNotExist('TypeString').limit(1000).find().then((events)=>{
+            console.log(events.length);
+            console.log(events);
+            var updatedEvents = _.map(events,(e)=>{
+              e.set('TypeString',$scope.typeString);
+              return e;
+            });
+            console.log(updatedEvents);
+            let timerCount = 0;
+            let timer = setInterval(function () {
+              console.log(timer+'s');
+              timerCount++;
+            }, 1000);
+            return Parse.Object.saveAll(updatedEvents)
+            .then(()=>{
+              clearInterval(timer);
+            });
+          });
+        };
 
         $scope.loadAnthill = function(){
             return ParseAnthill.getAll().then((anthills)=>{
@@ -22,37 +46,34 @@ class CoursesCtrl{
               return;
           }
 
-          processTypes()
-          .then(processTags)
+          processTags()
           .then(processFeeds)
-          .then(processCourses);
+          .then(processCourses)
+          .fail((err)=>{
+            console.log(err);
+          });
         };
-
-        function processTypes(){
-            return ParseType.getAll()
-            .then((types)=>{
-              eventType = _.filter(types, (t)=>{
-                return t.attributes.Name == 'Amphi / CM';
-              })[0];
-            });
-        }
 
         function processTags(){
           let existingTags;
           let extractedTags;
           let newTags;
           let allTags;
+          let existingTagObjects;
 
           return ParseTag.getAll()
           .then((tags)=>{
 
             allTags = tags;
 
-            existingTags = _.chain(tags)
+            existingTags = _.chain(allTags)
             .pluck('attributes.Name')
+            .map((tag)=>{
+              return tag.toUpperCase();
+            })
             .value();
             console.log('existingTags');
-            console.log(existingTags);
+            console.log(existingTags.length);
 
             extractedTags = _.chain($scope.csv.result)
             .groupBy('tags')
@@ -69,13 +90,19 @@ class CoursesCtrl{
             })
             .value();
 
-            console.log('extractedTags');
-            console.log(extractedTags);
+            // console.log('extractedTags');
+            // console.log(extractedTags);
+
+            let extractedTagsUpperCase = _.map(extractedTags,(tag)=>{
+              return tag.toUpperCase();
+            });
+            console.log('extractedTagsUpperCase');
+            console.log(extractedTagsUpperCase);
 
             newTags = _.chain(extractedTags)
             .filter((tag)=>{
               // only keep the one that are not already existing
-              return !_.includes(existingTags, tag);
+              return !_.includes(existingTags, tag.toUpperCase());
             })
             .map((tag)=>{
               return ParseTag.create(tag);
@@ -85,18 +112,36 @@ class CoursesCtrl{
             console.log('newTags');
             console.log(newTags);
 
+
+            existingTagObjects = _.chain(allTags)
+            .filter((tag)=>{
+              return _.includes(extractedTagsUpperCase, tag.attributes.Name.toUpperCase());
+            })
+            .value();
+            console.log('existingTagObjects')
+            console.log(existingTagObjects);
+
+
             return newTags;
           })
           .then((newTags)=>{
+            if($scope.simulation)
+              return Parse.Promise.error("simulation done");
             return Parse.Object.saveAll(newTags);
           })
-          .then((newTags)=>{
+          .then((newTagsSaved)=>{
+
+            let newTagsId = _.pluck(newTagsSaved,'id');
+            let existingTagsId = _.pluck(existingTagObjects,'id');
+            if(!$scope.anthill.attributes.Tags)
+              $scope.anthill.attributes.Tags = [];
+            $scope.anthill.set('Tags',$scope.anthill.attributes.Tags.concat(newTagsId).concat(existingTagsId));
+            $scope.anthill.save();
             return allTags.concat(newTags);
           });
         }
 
         function processFeeds(tagList){
-          console.log(tagList);
 
           let feeds = _.chain($scope.csv.result)
           // we groupBy feed to get all the different feeds
@@ -110,14 +155,17 @@ class CoursesCtrl{
           .map((feedCourses, feedName)=>{
 
             let tagsArray = feedCourses[0].tags.split('/');
+            let tagsArrayUpper = _.map(tagsArray,(tag)=>{
+              return tag.toUpperCase();
+            });
 
             // for each feed get the corresponding tag.
             let feedTags = _.pluck(_.filter(tagList,(tag)=>{
-              return _.includes(tagsArray, tag.attributes.Name);
+              return _.includes(tagsArrayUpper, tag.attributes.Name.toUpperCase());
             }), 'id');
 
             // don't forget to also include the id of anthill as a tag
-            feedTags.push($scope.anthill.id);
+            feedTags.push($scope.anthill.attributes.IdentityTag);
 
             return ParseFeed.create(feedName, feedTags);
           })
@@ -127,6 +175,7 @@ class CoursesCtrl{
         }
 
         function processCourses(feedList){
+          console.log("added "+feedList.length+" feeds");
           console.log(feedList);
 
           let courses = _.chain($scope.csv.result)
@@ -145,6 +194,9 @@ class CoursesCtrl{
               return feed.attributes.Name == c.feed;
             })[0];
 
+            let eventType = ParseType.get(c.type);
+
+
             let course = ParseCourse.create({
               'Name': c.feed,
               'Author': c.professor,
@@ -152,17 +204,20 @@ class CoursesCtrl{
               'Ending': c.end,
               'Feeds': [courseFeed.id],
               'Recurrence': false,
-              'Place': c.room,
-              'Type': eventType.id,
-              'TypeString': eventType.attributes.Name,
-              'Icon': eventType.attributes.Icon
+              'Place': c.room
             });
+            if(eventType){
+              course.set('Type', eventType.id);
+              course.set('TypeString', eventType.attributes.Name);
+              course.set('Icon', eventType.attributes.Icon);
+            }
             return course;
           })
           .value();
 
           return Parse.Object.saveAll(courses)
           .then((savedCourses)=>{
+            console.log("added "+savedCourses.length+" courses");
             console.log(savedCourses);
 
             let updatedCourses = [];
@@ -188,9 +243,6 @@ class CoursesCtrl{
             .value();
 
             return Parse.Object.saveAll(updatedCourses);
-          })
-          .then((savedUpdatedCourses)=>{
-            console.log(savedUpdatedCourses);
           });
         }
     }

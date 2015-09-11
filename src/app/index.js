@@ -60,12 +60,12 @@ angular.module('studhq', [
         };
     });
 
-    Parse.initialize('LK0ZnJAA5uMrksf7t5tGPbMTrIlmwzWYzrJrHcjR', 'uFXMpOz1ksG4bIyRdkLvwxCtx6MdWZ8R0R5H8Pqo');
+    //Parse.initialize('LK0ZnJAA5uMrksf7t5tGPbMTrIlmwzWYzrJrHcjR', 'uFXMpOz1ksG4bIyRdkLvwxCtx6MdWZ8R0R5H8Pqo');
 
     /********************************************************************************************************/
     /*                                          PRODUCTION DATABASE                                         */
     /*                                                                                                      */
-    // Parse.initialize('cei7mRd9aWsbrWCkmkbXzhinkcKhnsIlw59BnaMY', 'EhQ2No3Qz2HXJzQ03cgYQ6uhBkHYx8uXhf3Ym3Q8');
+    Parse.initialize('tKLLeIXPLbyDCM4GSqBoSubRF4wEYt0664yc4mqx', 'C0eX480wmXBxVB3qEoZLpziUCgXhVZ0G2BaRw9OI');
     /********************************************************************************************************/
 
     moment.locale('fr');
